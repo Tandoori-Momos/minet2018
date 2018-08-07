@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Handwriting Sample</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var textData = new Object();
+
+    var msg = new SpeechSynthesisUtterance(); // Feedback Object 
+    var voices = window.speechSynthesis.getVoices(); // Get an array of 
+    
+    var linesArr = []; // Stores the lines in the image
+
+    var para = []; // Stores the lines said by the user
+
+
+
+    function speak(key) {
+        if(key == 'loaded') {
+            msg.text = "Your image has been loaded";
+            speechSynthesis.speak(msg);
+        }
+    }
+
+    // Perform OCR on the image and return lines
+
+    function processImage() {
+
+        var textArea = document.getElementById("responseTextArea");
+
+        var subscriptionKey = "44ca0d873efa4fc1924f9992ec4ba2b4";
+
+        var uriBase =
+            "https://westcentralus.api.cognitive.microsoft.com/vision/v2.0/recognizeText";
+        var params = {
+            "mode": "Handwritten",
+        };
+
+        
+        var sourceImageUrl = document.getElementById("inputImage").value;
+        document.querySelector("#sourceImage").src = sourceImageUrl;
+
+        $.ajax({
+            url: uriBase + "?" + $.param(params),
+
+            // Request headers.
+            beforeSend: function(jqXHR){
+                jqXHR.setRequestHeader("Content-Type","application/json");
+                jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+            },
+
+            type: "POST",
+
+            // Request body.
+            data: '{"url": ' + '"' + sourceImageUrl + '"}',
+        })
+
+        .done(function(data, textStatus, jqXHR) {
+            
+            setTimeout(function () {
+                // "Operation-Location" in the response contains the URI
+                // to retrieve the recognized text.
+                var operationLocation = jqXHR.getResponseHeader("Operation-Location");
+
+                // Make the second REST API call and get the response.
+                $.ajax({
+                    url: operationLocation,
+
+                    // Request headers.
+                    beforeSend: function(jqXHR){
+                        jqXHR.setRequestHeader("Content-Type","application/json");
+                        jqXHR.setRequestHeader(
+                            "Ocp-Apim-Subscription-Key", subscriptionKey);
+                    },
+
+                    type: "GET",
+                })
+
+                .done(function(data) {
+                    // Show formatted JSON on webpage.
+
+
+                    linesArr = data.recognitionResult.lines;
+
+                    textData.imageText = linesArr;
+
+                    console.log(linesArr);
+
+                    for(var i = 0; i < linesArr.length; i++) {
+                        console.log("Line " + i + ":" + linesArr[i].text + "\n");
+                        textArea.value += "Line " + i + " : " + linesArr[i].text + '\n';
+                    }
+
+                    speak("loaded");
+
+
+
+                })
+            }, 10000);
+        })
+
+    
+    };
+
+    function ReadFile() {
+        
+        var p = "";
+        for(var i = 0; i < linesArr.length; i++) {
+            p += linesArr[i].text + " ";
+        }
+
+        console.log(p);
+
+        msg.text = p;
+        speechSynthesis.speak(msg);
+    }
+
+    function Listen() {
+    // get last word said element
+    var field = document.getElementById('val');
+
+    // new instance of speech recognition
+    var recognition = new webkitSpeechRecognition();
+    // set params
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.start();
+
+    var words = [];
+
+    recognition.onresult = function(event){
+      
+      
+      var resultsLength = event.results.length -1 ;
+      
+      var ArrayLength = event.results[resultsLength].length -1;
+      
+      var saidWord = event.results[resultsLength][ArrayLength].transcript;
+
+      if (saidWord) {
+        Fetch();
+      }
+
+    textData.speechText = words;
+
+    function Fetch() {
+        field.value += saidWord;
+        para.push(saidWord);
+
+        console.log(para);
+
+        words  = saidWord.split(" ");
+      
+    }    
+
+    }
+
+    // speech error handling
+    recognition.onerror = function(event){
+      console.log('error?');
+      console.log(event);
+    }
+
+    }
+
+
+
+
+
+</script>
+
+<input type="text" name="inputImage" id="inputImage"
+    value="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Cursive_Writing_on_Notebook_paper.jpg/800px-Cursive_Writing_on_Notebook_paper.jpg" />
+<button onclick="processImage()">read</button>
+
+<button onclick="ReadFile()">Read Text</button>
+
+<button onclick="Listen()">Revise</button>
+<br><br>
+
+<input id="val">
+
+<br><br>
+<div id="wrapper">
+    <div id="jsonOutput">
+        response:
+        <br><br>
+        <textarea id="responseTextArea" class="UIInput"></textarea>
+    </div>
+    <div id="imageDiv" style="width:420px; display:table-cell;">
+        source image:
+        <br><br>
+        <img id="sourceImage" width="400" />
+    </div>
+</div>
+</body>
+</html>

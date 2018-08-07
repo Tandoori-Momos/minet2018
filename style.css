@@ -1,0 +1,73 @@
+.main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Chrome 10-25, Safari 5.1-6 */
+}
+.frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 650px;
+  width : 322px;
+  background: #333;
+  transform: translate(-50%, -50%);
+  border-radius: 30px;
+}
+#screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 82%;
+  width : 95%;
+  margin-top: 3px;
+  background: #f7f7f9;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+
+}
+
+#screen img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 2px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background: #404047;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #000000;
+}
+::-webkit-scrollbar-track {
+  background: #666666;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+::-webkit-scrollbar-track:hover {
+  background: #666666;
+}
+::-webkit-scrollbar-track:active {
+  background: #333333;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}

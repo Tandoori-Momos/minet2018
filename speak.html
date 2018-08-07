@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js" charset="utf-8"></script>	
+        <script src="https://unpkg.com/sweetalert2@7.3.2/dist/sweetalert2.all.js"></script>
+	<link rel="stylesheet" href="style.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Raleway:300" rel="stylesheet">
+
+
+
+	<style>
+	@font-face {
+		font-family: suir;
+		src: url("suir.otf");
+	}
+		textarea {
+			position: absolute;
+			top: 75px;
+			left: 17px;
+			width: 260px;
+			height: 340px;
+			background: transparent;
+			z-index: 999;
+			border: none;
+			outline: none;
+			box-sizing: border-box;
+			padding: 20px;
+			font-family: raleway;
+			font-weight: 300;
+			text-transform: uppercase;
+			padding-top: 25px;
+			line-height: 22px;
+			letter-spacing: 1px;
+
+		}
+
+		.bts {
+			position: absolute;
+			z-index: 999;
+			top: 454px;
+		}
+		#listen {
+			position: absolute;
+			top: 84%;	
+			left: 0;
+			width: 88%;
+			height: 54px;
+			background: #579aef;
+			z-index: 999;
+			border: none;
+			text-transform: uppercase;
+			color: #fff;
+			left: 50%;
+			transform: translateX(-50%);
+			font-family: suir;
+			font-weight: 600;
+			letter-spacing: 1.6px;
+			border-radius: 5px;
+			font-size: 14px;
+			outline: none;
+		}
+
+	</style>
+
+</head>
+<body>
+
+<div class="main">
+	<div class="main">
+
+      <div class="frame">
+
+        <div id="screen" style = "overflow: scroll;">
+      	<button id = "listen">Start Listening</button>
+			<textarea id = "txt"></textarea>
+			<img src="screens/revise.png" style="height: auto;" alt="">
+        </div>
+    </div>
+</div>
+       
+
+</div>
+</body>
+</html>
+
+
+<script>
+var textarea = document.getElementById("txt");
+var linesArr = JSON.parse(localStorage.getItem("ocrText"));
+
+console.log(linesArr);
+
+var start = document.getElementById("listen");
+
+listen.addEventListener("click", function () {
+	  // get last word said element
+    var field = document.getElementById('val');
+
+    // new instance of speech recognition
+    var recognition = new webkitSpeechRecognition();
+    // set params
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.start();
+
+    var words = [];
+    var para = [];
+
+    recognition.onresult = function(event){
+      
+      
+      var resultsLength = event.results.length -1 ;
+      
+      var ArrayLength = event.results[resultsLength].length -1;
+      
+      var saidWord = event.results[resultsLength][ArrayLength].transcript;
+
+      if (saidWord) {
+        Fetch();
+      }
+
+
+    function Fetch() {
+        textarea.value += saidWord + ".";
+        para.push(saidWord);
+
+        console.log(para);
+
+        words  = saidWord.split(" ");
+      
+    }    
+
+    }
+
+    // speech error handling
+    recognition.onerror = function(event){
+      console.log('error?');
+      console.log(event);
+    }
+});
+
+
+
+
+</script>
