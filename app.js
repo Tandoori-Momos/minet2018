@@ -3,7 +3,6 @@ const ejs = require('ejs');
 const app = express();
 const bodyParser = require('body-parser')
 
-import * as algo1 from './part1';
 
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="style.css">
+	<link href="https://fonts.googleapis.com/css?family=Raleway:300" rel="stylesheet">
+    <style>
+    textarea {
+
+      position: absolute;
+        top: 107px;
+        left: 28px;
+        width: 247px;
+        height: 226px;
+        background: transparent;
+        z-index: 999;
+        border: none;
+        outline: none;
+        box-sizing: border-box;
+        padding: 20px;
+        font-family: raleway;
+        font-weight: 300;
+        text-transform: uppercase;
+        padding-top: 25px;
+        line-height: 22px;
+        letter-spacing: 1px;
+        font-family: raleway;
+  }
+    </style>
+</head>
+<body>
+<div class="main">
+	<div class="main">
+
+      <div class="frame">
+
+        <div id="screen">
+			<img src="screens/summary.png" alt="">
+      <textarea id = "ta"></textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+  var textarea = document.getElementById("ta");
+  ta.value = localStorage.getItem("summaryText");
+</script>
+</div>
+</body>
+</html>

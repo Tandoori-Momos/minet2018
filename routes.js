@@ -1,6 +1,8 @@
 const bodyParser = require('body-parser')
 
 
+import * as algo1 from './part1';
+
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 module.exports = function(app) {
@@ -18,6 +20,12 @@ module.exports = function(app) {
 
 
   });
+  app.get("/summary", function(req,res) {
+    res.render('summary.ejs');
+
+
+  });
+
 
   app.get("/speak", function(req,res) {
 
@@ -39,6 +47,10 @@ module.exports = function(app) {
         .then(function(response) {
             res.send(response.get());
         });
+  });
+
+  app.post("/part1", urlencodedParser, function(req,res) {
+    res.send(algo1.Run(req.body.ocrText, req.body.speechText, req.body.mode, req.body.keywordsArr));
   });
 
 
