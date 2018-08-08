@@ -74,7 +74,7 @@
       <div class="frame">
 
         <div id="screen" style = "overflow: scroll;">
-      	<button id = "listen">Start Listening</button>
+      	<button id = "listen"><span id = "bttxt">Start Listening</span></button>
 			<textarea id = "txt"></textarea>
 			<img src="screens/revise.png" style="height: auto;" alt="">
         </div>
@@ -88,6 +88,7 @@
 
 
 <script>
+var evaluate = 1;
 var textarea = document.getElementById("txt");
 var linesArr = JSON.parse(localStorage.getItem("ocrText"));
 
@@ -98,6 +99,10 @@ var start = document.getElementById("listen");
 listen.addEventListener("click", function () {
 	  // get last word said element
     var field = document.getElementById('val');
+
+    document.getElementById("bttxt").innerHTML = "Evaluate"
+
+    evaluate = 1;
 
     // new instance of speech recognition
     var recognition = new webkitSpeechRecognition();
