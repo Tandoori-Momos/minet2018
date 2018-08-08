@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js" charset="utf-8"></script>
+        <script src="https://unpkg.com/sweetalert2@7.3.2/dist/sweetalert2.all.js"></script>
+	<link rel="stylesheet" href="style.css">
+	<link href="https://fonts.googleapis.com/css?family=Raleway:300" rel="stylesheet">
+
+
+	<style>
+		textarea {
+			position: absolute;
+			top: 75px;
+			left: 17px;
+			width: 260px;
+			height: 340px;
+			background: transparent;
+			z-index: 999;
+			border: none;
+			outline: none;
+			box-sizing: border-box;
+			padding: 20px;
+			font-family: raleway;
+			font-weight: 300;
+			text-transform: uppercase;
+			padding-top: 25px;
+			line-height: 22px;
+			letter-spacing: 1px;
+
+		}
+
+		.bts {
+			position: absolute;
+			z-index: 999;
+			top: 454px;
+		}
+
+	</style>
+
+</head>
+<body>
+
+<div class="main">
+	<div class="main">
+
+      <div class="frame">
+
+        <div id="screen" style = "overflow: scroll;">
+        <div class = "bts" id="back" style = "left: 30px; width: 40px; height: 40px; ">	</div>
+         <div class = "bts" id="revise" style = "left: 100px; width: 40px; height: 40px; ">	</div>
+          <div class = "bts" id="speak" style = "left: 170px; width: 40px; height: 40px;">	</div>
+           <div class = "bts" id="settings" style = "left: 240px; width: 40px; height: 40px;">	</div>
+			<textarea id = "txt" readonly="readonly"></textarea>
+			<img src="screens/revise.png" style="height: auto;" alt="">
+        </div>
+    </div>
+</div>
+
+
+</div>
+</body>
+</html>
+
+
+<script>
+var textarea = document.getElementById("txt");
+var linesArr = JSON.parse(localStorage.getItem("ocrText"));
+
+var keywords = [];
+
+var p = "";
+
+for(var i = 0; i < linesArr.length; i++) {
+		p += linesArr[i].text + " ";
+}
+
+console.log(linesArr);
+
+
+for(var i = 0; i < linesArr.length; i++) {
+	textarea.value += linesArr[i].text + " ";
+}
+
+
+var speakBt = document.getElementById("speak");
+var reviseBt = document.getElementById("revise");
+var summaryBt = document.getElementById("settings");
+var keywordsBt = document.getElementById("back");
+
+speakBt.addEventListener("click", function() {
+
+	var msg = new SpeechSynthesisUtterance(); // Feedback Object
+    var voices = window.speechSynthesis.getVoices(); // Get an array of
+
+        console.log(p);
+
+        msg.text = p;
+
+
+        speechSynthesis.speak(msg);
+
+});
+
+
+reviseBt.addEventListener("click", function() {
+
+	(async function getColor () {
+// inputOptions can be an object or Promise
+const inputOptions = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve({
+      'wordbyword': 'Strict',
+      'inorder': 'In Order',
+      'lenient': 'Lenient'
+    })
+  }, 2000)
+})
+
+const {value: color} = await swal({
+  title: 'Select Accuracy',
+  target: document.getElementById('screen'),
+  input: 'radio',
+  inputOptions: inputOptions,
+  inputValidator: (value) => {
+    return !value && 'You need to choose something!'
+  }
+})
+
+if (color) {
+	swal({
+  type: 'success',
+  target: document.getElementById('screen'),
+  title: 'Success...',
+  text: 'You can begin revising!',
+  footer: '<a href>Why do I have this issue?</a>'
+})
+
+	$('.swal2-confirm').click(function() {
+
+localStorage.setItem("mode", color);
+localStorage.setItem("keywords", JSON.stringify(keywords));
+
+
+textarea.value = "";
+
+               window.location.href = "speak";
+         });
+}
+
+})()
+});
+
+keywordsBt.addEventListener("click", function() {
+	(async function getEmail () {
+	const {value: email} = await swal({
+	  title: 'Enter Keyword',
+	  input: 'text',
+	  inputPlaceholder: 'Enter a keyword',
+		target: document.getElementById('screen')
+	})
+
+	if (email) {
+		keywords.push(email);
+		swal({
+		type: 'success',
+		target: document.getElementById('screen'),
+		title: 'Success...',
+		text: 'Added Keyword!',
+		footer: '<a href>Why do I have this issue?</a>'
+	})
+	}
+
+	})()
+});
+
+</script>

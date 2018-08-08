@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js" charset="utf-8"></script>
+        <script src="https://unpkg.com/sweetalert2@7.3.2/dist/sweetalert2.all.js"></script>
+	<link rel="stylesheet" href="style.css">
+
+
+	<style>
+		#bt {
+			position: absolute;
+			z-index: 999;
+
+			width: 180px;
+			height: 40px;
+			background: ;
+			top: 196px;
+			left: 50px;
+			display: hidden;
+		}
+	</style>
+
+</head>
+<body>
+
+<div class="main">
+	<div class="main">
+
+      <div class="frame">
+
+        <div id="screen" style = "overflow: scroll;">
+
+        	<div id = "bt"></div>
+			<img src="screens/main.png" style="height: auto;" alt="">
+        </div>
+    </div>
+</div>
+
+
+</div>
+</body>
+</html>
+
+<script>
+
+
+	  function processImage(sourceImageUrl) {
+
+
+        var subscriptionKey = "7a35ed202633451ebe89878304f0b63b";
+
+        var uriBase =
+            "https://westcentralus.api.cognitive.microsoft.com/vision/v2.0/recognizeText";
+        var params = {
+            "mode": "Handwritten",
+        };
+
+
+        $.ajax({
+            url: uriBase + "?" + $.param(params),
+
+            // Request headers.
+            beforeSend: function(jqXHR){
+                jqXHR.setRequestHeader("Content-Type","application/json");
+                jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+            },
+
+            type: "POST",
+
+            // Request body.
+            data: '{"url": ' + '"' + sourceImageUrl + '"}',
+        })
+
+        .done(function(data, textStatus, jqXHR) {
+
+            setTimeout(function () {
+                // "Operation-Location" in the response contains the URI
+                // to retrieve the recognized text.
+                var operationLocation = jqXHR.getResponseHeader("Operation-Location");
+
+                // Make the second REST API call and get the response.
+                $.ajax({
+                    url: operationLocation,
+
+                    // Request headers.
+                    beforeSend: function(jqXHR){
+                        jqXHR.setRequestHeader("Content-Type","application/json");
+                        jqXHR.setRequestHeader(
+                            "Ocp-Apim-Subscription-Key", subscriptionKey);
+                    },
+
+                    type: "GET",
+                })
+
+                .done(function(data) {
+                    // Show formatted JSON on webpage.
+
+
+                    linesArr = data.recognitionResult.lines;
+
+                    console.log(linesArr);
+
+
+          			localStorage.setItem("ocrText", JSON.stringify(linesArr));
+
+                    for(var i = 0; i < linesArr.length; i++) {
+                        console.log("Line " + i + ":" + linesArr[i].text + "\n");
+                    }
+
+                })
+            }, 10000);
+        })
+
+
+    };
+
+		var bt = document.getElementById("bt");
+
+		bt.addEventListener("click", function() {
+
+          swal({
+			  title: 'Add New Note',
+			  input: 'text',
+	          target: document.getElementById('screen'),
+			  inputAttributes: {
+			    autocapitalize: 'off'
+			  },
+			  showCancelButton: true,
+			  confirmButtonText: 'Submit',
+			  showLoaderOnConfirm: true,
+			  preConfirm: (url) => {
+			   	processImage(url);
+			  },
+			  allowOutsideClick: () => !swal.isLoading()
+			}).then((result) => {
+			  if (result.value) {
+			     swal({
+          title: 'Please Wait!',
+          target: document.getElementById('screen'),
+          text: 'Analysing the image text',
+          timer: 20000,
+          onOpen: () => {
+            swal.showLoading()
+          }
+        }).then((result) => {
+          swal({
+            title: 'Success...',
+            text: 'Note has been added!',
+            type: 'success',
+            target: document.getElementById('screen')
+
+          })
+          $('.swal2-confirm').click(function() {
+               window.location.href = "revise";
+         });
+
+			});
+    }
+		});
+    });
+</script>
